@@ -10,7 +10,7 @@ mongodb_uri = os.environ.get("MONGODB_URL")
 if mongodb_uri is None:
     raise ValueError("Please set the environment variable 'telegram_token'") 
 
-config_dir = Path(__file__).parent.parent.resolve() / "config"
+config_dir = Path(__file__).parent.resolve() / "config"
 
 # load yaml config
 with open(config_dir / "config.yml", 'r') as f:
@@ -42,4 +42,4 @@ with open(config_dir / "models.yml", 'r') as f:
     models = yaml.safe_load(f)
 
 # files
-help_group_chat_video_path = Path(__file__).parent.parent.resolve() / "static" / "help_group_chat.mp4"
+help_group_chat_video_path = Path(__file__).parent.resolve() / "static" / "help_group_chat.mp4"
