@@ -4,3 +4,5 @@ tiktoken>=0.3.0
 PyYAML==6.0
 pymongo==4.3.3
 python-dotenv==0.21.0
+wheel==0.44.0
+setuptools==59.5.0
