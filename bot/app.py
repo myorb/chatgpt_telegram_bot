@@ -62,6 +62,17 @@ async def main():
     # Start polling for new messages
     await application.run_polling()
 
-# Entry point of the script
-if __name__ == "__main__":
-    asyncio.run(main())
+if __name__ == '__main__':
+    try:
+        # Get the current event loop or create a new one if none exists
+        loop = asyncio.get_event_loop()
+        if loop.is_running():
+            # If the loop is already running, just schedule the coroutine
+            loop.create_task(main())
+        else:
+            # Otherwise, run the event loop
+            loop.run_until_complete(main())
+    except RuntimeError as e:
+        logging.error(f"Runtime error: {e}")
+    except Exception as e:
+        logging.error(f"Unexpected error: {e}")
