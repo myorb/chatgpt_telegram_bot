@@ -43,7 +43,7 @@ def stream_openai_response(update: Update, context: CallbackContext):
         print(f"Error communicating with OpenAI: {e}")
         update.message.reply_text("Sorry, something went wrong.")
 
-def def main():
+def main():
     try:
         # Create the Updater and pass it the bot's token
         updater = Updater(TELEGRAM_TOKEN)
