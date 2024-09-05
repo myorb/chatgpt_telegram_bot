@@ -37,7 +37,7 @@ async def stream_openai_response(update: Update, context: ContextTypes.DEFAULT_T
         async for chunk in stream:
             final_response = chunk.choices[0].delta.content or "", end="")
             print(final_response)
-            await update.message.reply_text(final_response, quote=False)
+            await context.bot.send_message(chat_id=update.effective_chat.id, text=final_response)
 
     except Exception as e:
         print(f"Error communicating with OpenAI: {e}")
@@ -50,7 +50,7 @@ async def main():
 
     # Register the command and message handlers
     application.add_handler(CommandHandler("start", start))
-    application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, stream_openai_response))
+    application.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND), stream_openai_response))
 
     # Start the bot using long polling
     await application.run_polling()
