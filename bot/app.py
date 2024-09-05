@@ -12,12 +12,12 @@ OPENAI_API_KEY = os.getenv("openai_api_key")
 
 # Initialize OpenAI client
 openai.api_key = OPENAI_API_KEY
+# Define the start command handler
+async def start(update: Update, context: CallbackContext):
+    await update.message.reply_text("Hello! I'm a bot that proxies your message to OpenAI. Type something to start!")
 
-# Initialize Telegram bot
-def start(update: Update, context: CallbackContext):
-    update.message.reply_text("Hello! I'm a bot that proxies your message to OpenAI. Type something to start!")
-
-def stream_openai_response(update: Update, context: CallbackContext):
+# Define the handler for streaming OpenAI response
+async def stream_openai_response(update: Update, context: CallbackContext):
     user_message = update.message.text
 
     try:
@@ -37,30 +37,24 @@ def stream_openai_response(update: Update, context: CallbackContext):
                 delta = chunk['choices'][0]['delta']
                 if 'content' in delta:
                     final_response += delta['content']
-                    update.message.reply_text(delta['content'], quote=False)
+                    await update.message.reply_text(delta['content'], quote=False)
 
     except Exception as e:
         print(f"Error communicating with OpenAI: {e}")
-        update.message.reply_text("Sorry, something went wrong.")
+        await update.message.reply_text("Sorry, something went wrong.")
 
-def main():
-    try:
-        # Create the Updater and pass it the bot's token
-        updater = Updater(TELEGRAM_TOKEN)
+# Main function to run the bot
+async def main():
+    # Create the Application and pass it the bot's token
+    application = Application.builder().token(TELEGRAM_TOKEN).build()
 
-        # Register command and message handlers
-        updater.dispatcher.add_handler(CommandHandler("start", start))
-        updater.dispatcher.add_handler(MessageHandler(filters.text & ~filters.command, stream_openai_response))
+    # Register the command and message handlers
+    application.add_handler(CommandHandler("start", start))
+    application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, stream_openai_response))
 
-        # Start polling Telegram for new messages (long polling)
-        logging.info("Starting the bot...")
-        updater.start_polling()
-
-        # Run the bot until you press Ctrl-C
-        updater.idle()
-
-    except Exception as e:
-        logging.error(f"Error starting the bot: {e}")
+    # Start the bot using long polling
+    await application.run_polling()
 
 if __name__ == '__main__':
-    main()
+    import asyncio
+    asyncio.run(main())
