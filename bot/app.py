@@ -3,6 +3,8 @@ import openai
 import requests
 from telegram import Update
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
+import logging
+logging.basicConfig(level=logging.INFO)
 
 # Set up your environment variables (from DigitalOcean App Platform)
 TELEGRAM_TOKEN = os.getenv("telegram_token")
@@ -41,19 +43,24 @@ def stream_openai_response(update: Update, context: CallbackContext):
         print(f"Error communicating with OpenAI: {e}")
         update.message.reply_text("Sorry, something went wrong.")
 
-def main():
-    # Create the Updater and pass it the bot's token
-    updater = Updater(TELEGRAM_TOKEN)
+def def main():
+    try:
+        # Create the Updater and pass it the bot's token
+        updater = Updater(TELEGRAM_TOKEN)
 
-    # Register command and message handlers
-    updater.dispatcher.add_handler(CommandHandler("start", start))
-    updater.dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, stream_openai_response))
+        # Register command and message handlers
+        updater.dispatcher.add_handler(CommandHandler("start", start))
+        updater.dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, stream_openai_response))
 
-    # Start polling Telegram for new messages (long polling)
-    updater.start_polling()
+        # Start polling Telegram for new messages (long polling)
+        logging.info("Starting the bot...")
+        updater.start_polling()
 
-    # Run the bot until you press Ctrl-C
-    updater.idle()
+        # Run the bot until you press Ctrl-C
+        updater.idle()
+
+    except Exception as e:
+        logging.error(f"Error starting the bot: {e}")
 
 if __name__ == '__main__':
     main()
