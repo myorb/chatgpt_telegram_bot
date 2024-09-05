@@ -31,7 +31,7 @@ async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await context.bot.send_message(chat_id=update.effective_chat.id, text=response_content)
 
 if __name__ == '__main__':
-    application = ApplicationBuilder().token('TELEGRAM_TOKEN').build()
+    application = ApplicationBuilder().token(TELEGRAM_TOKEN).build()
     
     start_handler = CommandHandler('start', start)
     echo_handler = MessageHandler(filters.TEXT & (~filters.COMMAND), echo)
