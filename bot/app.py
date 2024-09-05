@@ -2,7 +2,7 @@ import os
 import openai
 import requests
 from telegram import Update
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
+from telegram.ext import Updater, CommandHandler, MessageHandler, filters, CallbackContext
 import logging
 logging.basicConfig(level=logging.INFO)
 
@@ -50,7 +50,7 @@ def main():
 
         # Register command and message handlers
         updater.dispatcher.add_handler(CommandHandler("start", start))
-        updater.dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, stream_openai_response))
+        updater.dispatcher.add_handler(MessageHandler(filters.text & ~filters.command, stream_openai_response))
 
         # Start polling Telegram for new messages (long polling)
         logging.info("Starting the bot...")
