@@ -1,7 +1,7 @@
 import os
 import logging
 from telegram import Update
-from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler
+from telegram.ext import filters, MessageHandler, ApplicationBuilder, CommandHandler, ContextTypes
 from openai import AsyncOpenAI
 
 logging.basicConfig(
