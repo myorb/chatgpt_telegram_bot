@@ -6,11 +6,8 @@ from telegram import Update
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
 
 # Environment variables for the API keys
-# TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
-# OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 TELEGRAM_TOKEN = os.getenv("telegram_token")
 OPENAI_API_KEY = os.getenv("openai_api_key")
-
 
 # Set up logging
 logging.basicConfig(
@@ -18,14 +15,14 @@ logging.basicConfig(
 )
 
 # Initialize AsyncOpenAI client with API key
-client = AsyncOpenAI(api_key=OPENAI_API_KEY)
+client = OpenAI(api_key=OPENAI_API_KEY)
 
 # Handler for the /start command
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await context.bot.send_message(chat_id=update.effective_chat.id, text="Hello! I'm a bot that proxies your messages to OpenAI. Type something to start!")
 
 # Handler for streaming OpenAI responses
-async def stream_openai_response(update: Update, context: ContextTypes.DEFAULT_TYPE):
+def stream_openai_response(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_message = update.message.text  # The message from the user
 
     try:
@@ -36,22 +33,16 @@ async def stream_openai_response(update: Update, context: ContextTypes.DEFAULT_T
             stream=True,  # Enable streaming
         )
 
-        # Stream the response in chunks
-        final_response = ""
-        async for chunk in stream:
-            if chunk.choices[0].delta.get("content"):
-                delta_content = chunk.choices[0].delta["content"]
-                final_response += delta_content
-                
-                # Send each chunk of content as a message to the user
-                await context.bot.send_message(chat_id=update.effective_chat.id, text=delta_content)
+        bot_reply = response['choices'][0]['message']['content']
+        logger.info(f"OpenAI response: {bot_reply}")
+        update.message.reply_text(bot_reply)
 
     except Exception as e:
         logging.error(f"Error communicating with OpenAI: {e}")
         await context.bot.send_message(chat_id=update.effective_chat.id, text="Sorry, something went wrong.")
 
 # Main function to initialize the bot and register handlers
-async def main():
+def main():
     # Initialize the Telegram bot application
     application = Application.builder().token(TELEGRAM_TOKEN).build()
 
@@ -63,16 +54,4 @@ async def main():
     await application.run_polling()
 
 if __name__ == '__main__':
-    try:
-        # Get the current event loop or create a new one if none exists
-        loop = asyncio.get_event_loop()
-        if loop.is_running():
-            # If the loop is already running, just schedule the coroutine
-            loop.create_task(main())
-        else:
-            # Otherwise, run the event loop
-            loop.run_until_complete(main())
-    except RuntimeError as e:
-        logging.error(f"Runtime error: {e}")
-    except Exception as e:
-        logging.error(f"Unexpected error: {e}")
+    main()
