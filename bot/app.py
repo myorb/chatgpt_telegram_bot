@@ -1,5 +1,5 @@
 import os
-import openai
+from openai import OpenAI
 import requests
 
 import logging
@@ -11,7 +11,7 @@ TELEGRAM_TOKEN = os.getenv("telegram_token")
 OPENAI_API_KEY = os.getenv("openai_api_key")
 
 # Initialize OpenAI client
-openai.api_key = OPENAI_API_KEY
+# openai.api_key = OPENAI_API_KEY
 # Define the start command handler
 # async def start(update: Update, context: CallbackContext):
 #     await update.message.reply_text("Hello! I'm a bot that proxies your message to OpenAI. Type something to start!")
@@ -64,6 +64,8 @@ logging.basicConfig(
     level=logging.INFO
 )
 
+client = OpenAI(api_key=OPENAI_API_KEY)
+
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await context.bot.send_message(chat_id=update.effective_chat.id, text="I'm a bot, please talk to me!")
 
@@ -72,7 +74,7 @@ async def stream_openai_response(update: Update, context: ContextTypes.DEFAULT_T
 
     try:
         # Send user message to OpenAI API with streaming enabled
-        response = openai.ChatCompletion.create(
+        response = client.chat.completions.create(
             model="gpt-4",
             messages=[
                 {"role": "system", "content": "You are a helpful assistant."},
