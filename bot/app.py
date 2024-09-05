@@ -35,7 +35,7 @@ async def stream_openai_response(update: Update, context: ContextTypes.DEFAULT_T
         )
 
         async for chunk in stream:
-            final_response = chunk.choices[0].delta.content or "", end=""
+            final_response = chunk.choices[0].delta.content or ""
             print(final_response)
             await context.bot.send_message(chat_id=update.effective_chat.id, text=final_response)
 
