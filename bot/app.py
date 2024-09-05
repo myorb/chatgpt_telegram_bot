@@ -67,7 +67,7 @@ logging.basicConfig(
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await context.bot.send_message(chat_id=update.effective_chat.id, text="I'm a bot, please talk to me!")
 
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def stream_openai_response(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_message = update.message.text
 
     try:
@@ -95,7 +95,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 if __name__ == '__main__':
-    application = ApplicationBuilder().token('TOKEN').build()
+    application = ApplicationBuilder().token(TELEGRAM_TOKEN).build()
     
     start_handler = CommandHandler('start', start)
     application.add_handler(start_handler)
