@@ -2,8 +2,8 @@ import yaml
 from pathlib import Path
 import os
 
-telegram_token = os.environ.get("telegram_token")
-openai_api_key = os.environ.get("openai_api_key")
+telegram_token = os.environ.get("TELEGRAM_TOKEN")
+openai_api_key = os.environ.get("OPENAI_API_KEY")
 mongodb_uri = os.environ.get("MONGODB_URL")
 
 if mongodb_uri is None:
